@@ -22,5 +22,15 @@ const interviewRouter = require('./routes/interview.routes');
 app.use('/api/auth', authRouter);
 app.use("/api/interview", interviewRouter);
 
+app.use((error, req, res, next) => {
+    console.error(`Unhandled request error (${req.method} ${req.originalUrl}):`, error);
+
+    if (res.headersSent) {
+        return next(error);
+    }
+
+    res.status(500).json({ message: 'An unexpected server error occurred' });
+});
+
 
 module.exports = app;

@@ -4,6 +4,10 @@ const connectToDB = require('./src/config/database');
 
 
 async function startServer() {
+    if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET must be configured before starting the server');
+    }
+
     await connectToDB();
 
     const port = process.env.PORT || 3000;

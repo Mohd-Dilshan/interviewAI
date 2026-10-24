@@ -37,11 +37,21 @@ async function registerUsercontroller(req, res) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await UserModel.create({
-        username,
-        email,
-        password: hashedPassword
-    });
+    let user;
+    try {
+        user = await UserModel.create({
+            username,
+            email,
+            password: hashedPassword
+        });
+    } catch (error) {
+        if (error.code === 11000) {
+            return res.status(409).json({
+                message: 'An account already exists with this email address or username'
+            });
+        }
+        throw error;
+    }
 
     const token =  jwt.sign(
         {id: user._id,username: user.username},

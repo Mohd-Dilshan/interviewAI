@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, Link } from 'react-router'
 import './auth.form.scss'
 import { useAuth } from '../hooks/useAuth.js'
@@ -11,12 +11,18 @@ const Login = () => {
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await handleLogin({email, password})
-        navigate('/')
+        setError("")
+        try {
+            await handleLogin({ email, password })
+            navigate('/')
+        } catch (err) {
+            setError(err.message)
+        }
     }
 
     if(loading) {
@@ -30,19 +36,20 @@ const Login = () => {
             <h1>Login</h1>
 
             <form onSubmit={handleSubmit}>
+                {error && <p className="form-error" role="alert">{error}</p>}
                 <div className="input-group">
                     <label htmlFor="email">Email</label>
                     <input
                      onChange={(e) => setEmail(e.target.value)}
-                     type="email" id="email" name="email" placeholder="Enter your email" />
+                     type="email" id="email" name="email" placeholder="Enter your email" required />
                 </div>
                 <div className="input-group">
                     <label htmlFor="password">Password</label>
                     <input
                      onChange={(e) => setPassword(e.target.value)}
-                     type="password" id="password" name="password" placeholder="Enter your password" />
+                     type="password" id="password" name="password" placeholder="Enter your password" required />
                 </div>
-                <button className="button primary-button">Login</button>
+                <button className="button primary-button" disabled={loading}>Login</button>
             </form>
             <p>Don't have an account? <Link to="/register">Register</Link></p>
         </div>
