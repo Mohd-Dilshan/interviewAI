@@ -1,27 +1,52 @@
-import React, {useState, useRef} from 'react'
+import {useState} from 'react'
 import "../style/home.scss"
 import { useInterview } from "../hooks/useInterview"
 import { useNavigate } from "react-router"
+import { useAuth } from "../../auth/hooks/useAuth.js"
+
+const formatFileSize = (size) => {
+    if (size < 1024) return `${size} bytes`
+    if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`
+    return `${(size / (1024 * 1024)).toFixed(2)} MB`
+}
 
 const Home = () => {
 
     const { loading, generateReport, reports } = useInterview()
+    const { handleLogout } = useAuth()
     const [jobDescription, setJobDescription] = useState("")
     const [selfDescription, setSelfDescription] = useState("")
-    const resumeInputRef = useRef()
+    const [logoutError, setLogoutError] = useState("")
+    const [resumeFile, setResumeFile] = useState(null)
+    const [isDraggingResume, setIsDraggingResume] = useState(false)
 
     const navigate = useNavigate()
 
+    const handleLogoutClick = async () => {
+        setLogoutError("")
+        try {
+            await handleLogout()
+            navigate('/login', { replace: true })
+        } catch (error) {
+            setLogoutError(error.message)
+        }
+    }
+
     const handleGenerateReport = async () => {
-        const resumeFile = resumeInputRef.current.files[ 0 ]
         const data = await generateReport({ jobDescription, selfDescription, resumeFile })
         navigate(`/interview/${data._id}`)
+    }
+
+    const handleResumeDrop = (event) => {
+        event.preventDefault()
+        setIsDraggingResume(false)
+        setResumeFile(event.dataTransfer.files[0] || null)
     }
 
     if(loading) {
         return (
             <main className="loading-screen">
-                <h1>Generating your interview plan...</h1>
+                <h1>Generating your resume report...</h1>
             </main>
         )
     }
@@ -31,6 +56,10 @@ const Home = () => {
     <main className="home">
       <div className="home__content">
         <header className="page-heading">
+          <button className="logout-button" type="button" onClick={handleLogoutClick}>
+            Log out
+          </button>
+          {logoutError && <p className="logout-error" role="alert">{logoutError}</p>}
           <h1>Create Your Custom <span>Interview Plan</span></h1>
           <p>Let our AI analyze the job requirements and your unique profile to build a<br className="desktop-break" /> winning strategy.</p>
         </header>
@@ -66,12 +95,42 @@ const Home = () => {
               <div className="profile-fields">
                 <div className="upload-field">
                   <label className="field-label" htmlFor="resume">Upload Resume <span>(Best Results)</span></label>
-                  <label className="upload-box" htmlFor="resume">
+                  <label
+                    className={`upload-box${isDraggingResume ? ' is-dragging' : ''}`}
+                    htmlFor="resume"
+                    onDragEnter={(event) => {
+                      event.preventDefault()
+                      setIsDraggingResume(true)
+                    }}
+                    onDragOver={(event) => event.preventDefault()}
+                    onDragLeave={(event) => {
+                      if (!event.currentTarget.contains(event.relatedTarget)) {
+                        setIsDraggingResume(false)
+                      }
+                    }}
+                    onDrop={handleResumeDrop}
+                  >
                     <span className="upload-box__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.7 10.1A6.8 6.8 0 0 0 5.4 8.5 4.9 4.9 0 0 0 6 18.3h12.5a4.1 4.1 0 0 0 .2-8.2ZM13 16h-2v-3.2H8.8l3.2-3.3 3.2 3.3H13V16Z"/></svg></span>
-                    <strong>Click to upload or drag &amp; drop</strong>
-                    <small>PDF or DOCX (Max 5MB)</small>
+                    {resumeFile ? (
+                      <>
+                        <strong className="upload-box__file-name" title={resumeFile.name} aria-live="polite">{resumeFile.name}</strong>
+                        <small>{formatFileSize(resumeFile.size)} · Click or drop to replace</small>
+                      </>
+                    ) : (
+                      <>
+                        <strong>Click to upload or drag &amp; drop</strong>
+                        <small>PDF or DOCX (Max 5MB)</small>
+                      </>
+                    )}
                   </label>
-                  <input ref={resumeInputRef}   className="visually-hidden" type="file" name="resume" id="resume" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                  <input
+                    className="visually-hidden"
+                    type="file"
+                    name="resume"
+                    id="resume"
+                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={(event) => setResumeFile(event.target.files[0] || null)}
+                  />
                 </div>
 
                 <div className="or-divider" aria-hidden="true"><span>OR</span></div>

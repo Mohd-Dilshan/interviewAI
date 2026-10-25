@@ -15,7 +15,9 @@
 }
 
 .page-heading {
+  position: relative;
   margin: 2px auto 30px;
+  padding-top: 38px;
   text-align: center;
 
   h1 {
@@ -39,6 +41,31 @@
     font-size: 0.86rem;
     line-height: 1.45;
   }
+}
+
+.logout-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 9px 14px;
+  border: 1px solid #3a3d44;
+  border-radius: 8px;
+  background: #171a1f;
+  color: #e7e8eb;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+
+  &:hover { border-color: #e20a51; background: #21171d; }
+  &:focus-visible { outline: 2px solid #ff8daf; outline-offset: 3px; }
+}
+
+.logout-error {
+  margin-bottom: 10px;
+  color: #ff8a9e;
+  font-size: 0.75rem;
 }
 
 .interview-card {
@@ -174,6 +201,7 @@
   transition: border-color 160ms ease, background 160ms ease;
 
   &:hover { border-color: #e20a51; background: #1c1b22; }
+  &.is-dragging { border-color: #e20a51; background: #21171d; }
   &:has(+ .visually-hidden:focus-visible) { outline: 2px solid #e20a51; outline-offset: 3px; }
 
   &__icon {
@@ -191,6 +219,14 @@
 
   strong { color: #ededef; font-size: 0.7rem; font-weight: 650; }
   small { color: #a2a3aa; font-size: 0.64rem; }
+
+  .upload-box__file-name {
+    width: 100%;
+    overflow: hidden;
+    padding: 0 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .visually-hidden {
@@ -368,6 +404,7 @@
   .home { padding: 8px; }
   .home__content { padding: 26px 10px 0; }
   .page-heading { margin-bottom: 22px; }
+  .logout-button { right: 0; }
   .page-heading h1 { font-size: 1.8rem; }
   .page-heading p { max-width: 330px; margin-inline: auto; font-size: 0.75rem; }
   .desktop-break { display: none; }
