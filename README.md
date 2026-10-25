@@ -3,7 +3,7 @@ An interview preparation platform powered by generative AI that creates tailored
 
 ## Live Project
 
-[Open InterviewAI](https://interview-ai-wheat-chi.vercel.app/)
+[Open InterviewAI](https://interview-ai-wheat-chi.vercel.app/) :https://interview-ai-wheat-chi.vercel.app/
 
 Overview
 This project helps candidates prepare for technical and behavioral interviews. It leverages large language models to assess a user target role, generate realistic interview questions, and evaluate candidate performance with targeted scoring and actionable insights.
