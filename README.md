@@ -1,6 +1,10 @@
 An AI-powered interview platform that generates customized questions, evaluates user responses, and provides targeted performance feedback.GenAI
 An interview preparation platform powered by generative AI that creates tailored interview scenarios, evaluates user responses, and delivers structured feedback.
 
+## Live Project
+
+[Open InterviewAI](https://interview-ai-wheat-chi.vercel.app/)
+
 Overview
 This project helps candidates prepare for technical and behavioral interviews. It leverages large language models to assess a user target role, generate realistic interview questions, and evaluate candidate performance with targeted scoring and actionable insights.
 
@@ -46,8 +50,8 @@ Installation
 Clone the repository:
 
 Bash
-git clone https://github.com/Mohd-Dilshan/GenAI.git
-cd GenAI
+git clone https://github.com/Mohd-Dilshan/interviewAI.git
+cd interviewAI
 Configure backend environment:
 
 Bash
